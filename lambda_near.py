@@ -2,6 +2,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+
 ### Functionality Helper Functions ###
 def parse_int(n):
     """
@@ -11,6 +12,9 @@ def parse_int(n):
         return int(n)
     except ValueError:
         return float("nan")
+
+
+
 
 
 def build_validation_result(is_valid, violated_slot, message_content):
@@ -111,7 +115,6 @@ In this section, you will create an Amazon Lambda function that will validate th
 
 """
 
-
 ### Intents Handlers ###
 def recommend_portfolio(intent_request):
     """
@@ -123,16 +126,45 @@ def recommend_portfolio(intent_request):
     investment_amount = get_slots(intent_request)["investmentAmount"]
     risk_level = get_slots(intent_request)["riskLevel"]
     source = intent_request["invocationSource"]
+    
+    '''
+    if parse_int(age) != None and parse_int(age) < 0 or parse_int(age) >= 65:
+        return build_validation_result(
+            False,
+            "age",
+            "Please restart, the age entered is invalid"
+            )
+            
+    elif parse_int(investment_amount) == None or parse_int(investment_amount) < 5000:
+        return build_validation_result(
+            False,
+            "investment_amount",
+            "The minimum investment threshold is $5000"
+            )
+    '''
+    
+    recommendation = ""        
+    if risk_level == "None":
+        recommendation = "100% bonds (AGG), 0% equities (SPY)"
+            
+    elif risk_level == "Low":
+        recommendation = "60% bonds (AGG), 40% equities (SPY)"
 
-    # YOUR CODE GOES HERE!
+    elif risk_level == "Medium":
+        recommendation = "40% bonds (AGG), 60% equities (SPY)"
 
+    elif risk_level == "High":
+        recommendation = "20% bonds (AGG), 80% equities (SPY)"
+            
+    return close(intent_request["sessionAttributes"], 
+        "Fulfilled",
+        message = recommendation)
 
 ### Intents Dispatcher ###
 def dispatch(intent_request):
     """
     Called when the user specifies an intent for this bot.
     """
-
     intent_name = intent_request["currentIntent"]["name"]
 
     # Dispatch to bot's intent handlers
@@ -141,12 +173,10 @@ def dispatch(intent_request):
 
     raise Exception("Intent with name " + intent_name + " not supported")
 
-
 ### Main Handler ###
 def lambda_handler(event, context):
     """
     Route the incoming request based on intent.
     The JSON body of the request is provided in the event slot.
     """
-
     return dispatch(event)
