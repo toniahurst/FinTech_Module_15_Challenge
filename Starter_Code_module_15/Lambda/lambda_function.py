@@ -2,6 +2,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+
 ### Functionality Helper Functions ###
 def parse_int(n):
     """
@@ -25,6 +26,41 @@ def build_validation_result(is_valid, violated_slot, message_content):
         "violatedSlot": violated_slot,
         "message": {"contentType": "PlainText", "content": message_content},
     }
+
+def validate_data(age, investmentAmount, risk_level, intent_request):
+    """
+    Validates the data provided by the user.
+    """
+
+    # Validate that the user is over 21 years old
+    if age is not None:
+        birth_date = datetime.strptime(age, "%Y-%m-%d")
+        age = relativedelta(datetime.now(), birth_date).years
+        if age < 0:
+            return build_validation_result(
+                False,
+                "age",
+                "To use this service you must be between 0 and 65 years old.  "
+                "Please provide a different date of birth.",
+            )
+
+    # Validate the investment amount, it should be > 0
+    if investmentAmount is not None:
+        investmentAmount = parse_float(
+            investmentAmount
+        )  # Since parameters are strings it's important to cast values
+        if investmentAmount <= 5000:
+            return build_validation_result(
+                False,
+                "investmentAmount",
+                "The amount to convert should be greater than $5,000, "
+                "please provide a correct amount in dollars to convert.",
+            )
+
+   
+
+    # A True results is returned if age or amount are valid
+    return build_validation_result(True, True, None, None)
 
 
 ### Dialog Actions Helper Functions ###
@@ -111,7 +147,6 @@ In this section, you will create an Amazon Lambda function that will validate th
 
 """
 
-
 ### Intents Handlers ###
 def recommend_portfolio(intent_request):
     """
@@ -123,16 +158,55 @@ def recommend_portfolio(intent_request):
     investment_amount = get_slots(intent_request)["investmentAmount"]
     risk_level = get_slots(intent_request)["riskLevel"]
     source = intent_request["invocationSource"]
+    
+    
+    if int(age) < 0 or int(age) >= 65:
+        return build_validation_result(
+            False,
+            "age",
+            "Please restart, the age entered is invalid"
+            )
+            
+    elif int(investment_amount) < 5000:
+        return build_validation_result(
+            False,
+            "investment_amount",
+            "The minimum investment threshold is $5000"
+            )
+            
+    elif risk_level == "None":
+        return build_validation_result(
+            True,
+            None,
+            "100% bonds (AGG), 0% equities (SPY)"
+            )
+            
+    elif risk_level == "Low":
+        return build_validation_result(
+            True,
+            None,
+            "60% bonds (AGG), 40% equities (SPY)"
+            )
 
-    # YOUR CODE GOES HERE!
+    elif risk_level == "Medium":
+        return build_validation_result(
+            True,
+            None,
+            "40% bonds (AGG), 60% equities (SPY)"
+            )
 
+    elif risk_level == "High":
+        return build_validation_result(
+            True,
+            None,
+            "20% bonds (AGG), 80% equities (SPY)"
+            )
 
 ### Intents Dispatcher ###
 def dispatch(intent_request):
     """
     Called when the user specifies an intent for this bot.
     """
-
     intent_name = intent_request["currentIntent"]["name"]
 
     # Dispatch to bot's intent handlers
@@ -141,12 +215,10 @@ def dispatch(intent_request):
 
     raise Exception("Intent with name " + intent_name + " not supported")
 
-
 ### Main Handler ###
 def lambda_handler(event, context):
     """
     Route the incoming request based on intent.
     The JSON body of the request is provided in the event slot.
     """
-
     return dispatch(event)
