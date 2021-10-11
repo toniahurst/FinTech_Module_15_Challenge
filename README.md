@@ -25,7 +25,7 @@ This program uses Python 3.7.10, Anaconda version 4.10.3, and Visual Studio Code
 
 ## Usage
 
-Open the Jupyter Lab notebook at https://github.com/toniahurst/FinTech_Module_12/blob/main/credit_risk_resampling.ipynb or download the notebook and run from the CLI.
+Run this from AWS.
 
 ## Contributors
 
