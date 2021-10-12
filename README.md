@@ -5,9 +5,9 @@
 
 # Images
 
-## Fig. 1: 
+## Movie. 1: 
 
-![Fig. 1]()
+![click this link](https://github.com/toniahurst/FinTech_Module_7_Challenge/blob/main/images/Screen%20Recording%202021-08-15%20at%2012.48.39%20PM.mov)
 
 ## Fig. 2: 
 
