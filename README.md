@@ -7,7 +7,7 @@
 
 ## Movie. 1: 
 
-![click this link](https://github.com/toniahurst/FinTech_Module_7_Challenge/blob/main/images/Screen%20Recording%202021-08-15%20at%2012.48.39%20PM.mov)
+![click this link](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/TH_Clip_1_Mod_15.mov)
 
 ## Fig. 2: 
 
