@@ -11,7 +11,27 @@ def parse_int(n):
         return int(n)
     except ValueError:
         return float("nan")
+        
+def get_recommendation():
+    """
+    Returns a portfolio recommendation based on the clients risk level
+    """
+    recommendation = ""        
+    if risk_level == "None":
+        recommendation = "100% bonds (AGG), 0% equities (SPY)"
+            
+    elif risk_level == "Low":
+        recommendation = "60% bonds (AGG), 40% equities (SPY)"
 
+    elif risk_level == "Medium":
+        recommendation = "40% bonds (AGG), 60% equities (SPY)"
+
+    elif risk_level == "High":
+        recommendation = "20% bonds (AGG), 80% equities (SPY)"
+            
+    return close(intent_request["sessionAttributes"], 
+        "Fulfilled",
+        message = recommendation)
 
 def build_validation_result(is_valid, violated_slot, message_content):
     """
@@ -79,8 +99,6 @@ def close(session_attributes, fulfillment_state, message):
 
     return response
 
-
-
 ### Intents Handlers ###
 def recommend_portfolio(intent_request):
     """
@@ -114,22 +132,8 @@ def recommend_portfolio(intent_request):
             "investment_amount",
             "The minimum investment threshold is $5000"
             )
-    recommendation = ""        
-    if risk_level == "None":
-        recommendation = "100% bonds (AGG), 0% equities (SPY)"
-            
-    elif risk_level == "Low":
-        recommendation = "60% bonds (AGG), 40% equities (SPY)"
-
-    elif risk_level == "Medium":
-        recommendation = "40% bonds (AGG), 60% equities (SPY)"
-
-    elif risk_level == "High":
-        recommendation = "20% bonds (AGG), 80% equities (SPY)"
-            
-    return close(intent_request["sessionAttributes"], 
-        "Fulfilled",
-        message = recommendation)
+    return get_recommendation(intent_request)       
+    
 
 ### Intents Dispatcher ###
 def dispatch(intent_request):
