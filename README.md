@@ -7,7 +7,7 @@
 
 ## Movie. 1: 
 
-![click this link](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/TH_Clip_1_Mod_15.mov)
+![Movie 1](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/TH_Clip_1_Mod_15.mov)
 
 ## Fig. 2: 
 
