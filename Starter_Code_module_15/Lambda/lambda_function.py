@@ -11,28 +11,8 @@ def parse_int(n):
         return int(n)
     except ValueError:
         return float("nan")
-        
-def get_recommendation():
-    """
-    Returns a portfolio recommendation based on the clients risk level
-    """
-    recommendation = ""        
-    if risk_level == "None":
-        recommendation = "100% bonds (AGG), 0% equities (SPY)"
-            
-    elif risk_level == "Low":
-        recommendation = "60% bonds (AGG), 40% equities (SPY)"
 
-    elif risk_level == "Medium":
-        recommendation = "40% bonds (AGG), 60% equities (SPY)"
-
-    elif risk_level == "High":
-        recommendation = "20% bonds (AGG), 80% equities (SPY)"
-            
-    return close(intent_request["sessionAttributes"], 
-        "Fulfilled",
-        message = recommendation)
-
+#------------------------------ delegate ----------------------------------------------
 def build_validation_result(is_valid, violated_slot, message_content):
     """
     Define a result message structured as Lex response.
@@ -46,7 +26,7 @@ def build_validation_result(is_valid, violated_slot, message_content):
         "message": {"contentType": "PlainText", "content": message_content},
     }
 
-
+#------------------------------ get_slots ---------------------------------------------
 ### Dialog Actions Helper Functions ###
 def get_slots(intent_request):
     """
@@ -54,7 +34,7 @@ def get_slots(intent_request):
     """
     return intent_request["currentIntent"]["slots"]
 
-
+#------------------------------ elicit_slot -------------------------------------------
 def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message):
     """
     Defines an elicit slot type response.
@@ -71,7 +51,7 @@ def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message)
         },
     }
 
-
+#------------------------------ delegate ----------------------------------------------
 def delegate(session_attributes, slots):
     """
     Defines a delegate slot type response.
@@ -82,7 +62,7 @@ def delegate(session_attributes, slots):
         "dialogAction": {"type": "Delegate", "slots": slots},
     }
 
-
+#------------------------------ close -------------------------------------------------
 def close(session_attributes, fulfillment_state, message):
     """
     Defines a close slot type response.
@@ -99,7 +79,9 @@ def close(session_attributes, fulfillment_state, message):
 
     return response
 
+
 ### Intents Handlers ###
+#------------------------------ recommend_portfolio -----------------------------------
 def recommend_portfolio(intent_request):
     """
     Performs dialog management and fulfillment for recommending a portfolio.
@@ -110,30 +92,86 @@ def recommend_portfolio(intent_request):
     investment_amount = get_slots(intent_request)["investmentAmount"]
     risk_level = get_slots(intent_request)["riskLevel"]
     source = intent_request["invocationSource"]
-    
+
     if source == "DialogCodeHook":
+        # This code performs basic validation on the supplied input slots.
+
+        # Gets all the slots
         slots = get_slots(intent_request)
+
+        # Validates user's input using the validate_data function
+        validation_result = validate_data(age, investment_amount, intent_request)
+
+        # If the data provided by the user is not valid,
+        # the elicitSlot dialog action is used to re-prompt for the first violation detected.
+        if not validation_result["isValid"]:
+            slots[validation_result["violatedSlot"]] = None  # Cleans invalid slot
+
+            # Returns an elicitSlot dialog to request new data for the invalid slot
+            return elicit_slot(
+                intent_request["sessionAttributes"],
+                intent_request["currentIntent"]["name"],
+                slots,
+                validation_result["violatedSlot"],
+                validation_result["message"],
+            )
+
         # Fetch current session attributes
         output_session_attributes = intent_request["sessionAttributes"]
 
         # Once all slots are valid, a delegate dialog is returned to Lex to choose the next course of action.
         return delegate(output_session_attributes, get_slots(intent_request))
+
+    # Return a message with result.
+    return close(
+        intent_request["sessionAttributes"],
+        "Fulfilled",
+        {
+            "contentType": "PlainText",
+            "content": """Based on your risk preference, we recommend this portfolio: {}.    
+           """.format(
+               get_recommendation(risk_level)
+            ),
+        },
+    )
+
+#------------------------------ get_slots ---------------------------------------------
+def validate_data(age,investment_amount, intent_request):
+    """
+    Validates the data provided by the user.
+    """
+    if age is not None:
+        age = parse_int(age)
+        if age < 0 or age > 64:
+            return build_validation_result(
+                False,
+                "age",
+                "Please enter an age from 0 to 65."
+                )
     
-    if parse_int(age) != None and parse_int(age) < 0 or parse_int(age) >= 65:
-        return build_validation_result(
-            False,
-            "age",
-            "Please restart, the age entered is invalid"
+    if investment_amount is not None:     
+        investment_amount = parse_int(investment_amount)
+        if investment_amount < 5000:
+            return build_validation_result(
+                False,
+                "investmentAmount",
+                "The investment amount should be greater or equal to $5,000.  "
+                "Please provide an amount greater or equal to $5,000 dollars."
             )
-            
-    elif parse_int(investment_amount) == None or parse_int(investment_amount) < 5000:
-        return build_validation_result(
-            False,
-            "investment_amount",
-            "The minimum investment threshold is $5000"
-            )
-    return get_recommendation(intent_request)       
-    
+   
+    # A True results is returned if investmentAmount and riskLevel are valid
+    return build_validation_result(True, None, None)
+
+#---------------------------------------------------------------------------------------
+def get_recommendation(risk_level):
+    risk_levels = {
+        "none": "100% bonds (AGG), 0% equities (SPY)",
+        "low": "60% bonds (AGG), 40% equities (SPY)",
+        "medium": "40% bonds (AGG), 60% equities (SPY)",
+        "high": "20% bonds (AGG), 80% equities (SPY)"
+    }
+    return risk_levels[risk_level.lower()]  
+
 
 ### Intents Dispatcher ###
 def dispatch(intent_request):
