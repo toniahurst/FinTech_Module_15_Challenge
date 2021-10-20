@@ -5,13 +5,13 @@
 
 # Images
 
-## Movie. 1: 
+## RoboAdvisor Lex Chatbot: 
 
 ![Movie 1](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/TH_Clip_1_Mod_15.mov)
 
-## Fig. 2: 
+## recommendPortfolio Lambda Function: 
 
-![Fig. 2]()
+![Movie 2](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/TH_lambda_and_lex.mov)
 
 ## Fig. 3: 
 
