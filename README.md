@@ -15,7 +15,7 @@
 
 ## Fig. 3: 
 
-![Fig. 3](I want to invest for my retirement)
+![Fig. 3](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/Mod_15_image.png)
 
 
 
