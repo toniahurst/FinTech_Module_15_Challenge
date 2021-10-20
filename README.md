@@ -13,9 +13,9 @@
 
 [Movie 2 - Lambda and Lex Integration](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/TH_lambda_and_lex.mov)
 
-## Fig. 3: 
+## Fig. 3 - Screenshot of Lambda and Lex Results: 
 
-![Fig 1 - Screenshot of Lambda and Lex Results](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/Mod_15_image.png)
+![Fig 1](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/Mod_15_image.png)
 
 
 
