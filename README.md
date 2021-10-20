@@ -15,7 +15,7 @@
 
 ## Fig. 3: 
 
-![Fig. 3]()
+![Fig. 3](I want to invest for my retirement)
 
 
 
