@@ -25,7 +25,7 @@ This program uses Python 3.7.10, Anaconda version 4.10.3, and Visual Studio Code
 
 ## Usage
 
-Run this from AWS.
+To run this, copy lambda_function.py and paste into your Amazon Lambda service. Create a Lex chabot and link the two. To see how this functions, watch [Movie 2](https://github.com/toniahurst/FinTech_Module_15_Challenge/blob/main/TH_lambda_and_lex.mov).
 
 ## Contributors
 
